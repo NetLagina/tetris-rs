@@ -84,7 +84,7 @@ impl Game {
                         }
                         if self.level.get_figure(i, j) {
                             rectangle(
-                                [1.0, 0.0, 0.0, 1.0],
+                                *self.level.figure().unwrap().color(),
                                 [x2, y2, square_side, square_side],
                                 c.transform,
                                 g,

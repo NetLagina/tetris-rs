@@ -45,11 +45,15 @@ impl Level {
         }
     }
 
+    pub fn figure(&self) -> Option<&Figure> {
+        self.figure.as_ref()
+    }
+
     pub fn step(&mut self) -> bool {
         let game_over;
         match &mut self.figure {
             Some(f) => {
-                let figure = Figure::new(f.x(), f.y() + 1, f.zone().clone());
+                let figure = Figure::new(f.x(), f.y() + 1, f.zone().clone(), *f.color());
                 if (figure.y() + figure.height() - 1) < ZONE_HEIGHT {
                     if is_free_space(&self.zone, &figure) {
                         f.set_y(figure.y());
@@ -92,7 +96,14 @@ impl Level {
                     }
                 }
                 let mut rng = rand::thread_rng();
-                let figure = create_figure(rng.gen_range(0, 7));
+                let red = rng.gen_range(0, 2) as f32;
+                let green = rng.gen_range(0, 2) as f32;
+                let blue = if red == 0.0 && green == 0.0 {
+                    1.0
+                } else {
+                    rng.gen_range(0, 2) as f32
+                };
+                let figure = create_figure(rng.gen_range(0, 7), [red, green, blue, 1.0]);
                 if !is_free_space(&self.zone, &figure) {
                     game_over = true;
                 } else {
@@ -105,54 +116,42 @@ impl Level {
     }
 
     pub fn move_right(&mut self) {
-        match &mut self.figure {
-            Some(f) => {
-                if f.x() + f.width() < ZONE_WIDTH {
-                    let fig = move_right(f);
-                    if is_free_space(&self.zone, &fig) {
-                        f.set_x(fig.x());
-                    }
+        if let Some(f) = &mut self.figure {
+            if f.x() + f.width() < ZONE_WIDTH {
+                let fig = move_right(f);
+                if is_free_space(&self.zone, &fig) {
+                    f.set_x(fig.x());
                 }
             }
-            _ => println!("no figure"),
         }
     }
 
     pub fn move_left(&mut self) {
-        match &mut self.figure {
-            Some(f) => {
-                if 0 < f.x() {
-                    let fig = move_left(f);
-                    if is_free_space(&self.zone, &fig) {
-                        f.set_x(fig.x());
-                    }
+        if let Some(f) = &mut self.figure {
+            if 0 < f.x() {
+                let fig = move_left(f);
+                if is_free_space(&self.zone, &fig) {
+                    f.set_x(fig.x());
                 }
             }
-            _ => println!("no figure"),
         }
     }
 
     pub fn rotate_right(&mut self) {
-        match &mut self.figure {
-            Some(f) => {
-                let fig = rotate_right(f);
-                if is_free_space(&self.zone, &fig) {
-                    *f = fig;
-                }
+        if let Some(f) = &mut self.figure {
+            let fig = rotate_right(f);
+            if is_free_space(&self.zone, &fig) {
+                *f = fig;
             }
-            _ => println!("no figure"),
         }
     }
 
     pub fn rotate_left(&mut self) {
-        match &mut self.figure {
-            Some(f) => {
-                let fig = rotate_left(f);
-                if is_free_space(&self.zone, &fig) {
-                    *f = fig;
-                }
+        if let Some(f) = &mut self.figure {
+            let fig = rotate_left(f);
+            if is_free_space(&self.zone, &fig) {
+                *f = fig;
             }
-            _ => println!("no figure"),
         }
     }
 }

@@ -8,14 +8,16 @@ pub struct Figure {
     y: usize,
     width: usize,
     height: usize,
+    color: [f32; 4],
     zone: Zone,
 }
 
 impl Figure {
-    pub fn new(x: usize, y: usize, zone: Vec<Vec<bool>>) -> Self {
+    pub fn new(x: usize, y: usize, zone: Vec<Vec<bool>>, color: [f32; 4]) -> Self {
         Figure {
             x,
             y,
+            color,
             zone: zone.clone(),
             width: zone.len(),
             height: zone[0].len(),
@@ -50,29 +52,9 @@ impl Figure {
         &self.zone
     }
 
-    /*
-        pub fn rotate_right(&mut self) {
-            let mut temp_zone = vec![vec![false; self.width]; self.height];
-            for j in 0..self.height {
-                for i in 0..self.width {
-                    temp_zone[self.height - j - 1][i] = self.zone[i][j];
-                }
-            }
-            self.zone = temp_zone;
-            mem::swap(&mut self.width, &mut self.height);
-        }
-
-        pub fn rotate_left(&mut self) {
-            let mut temp_zone = vec![vec![false; self.width]; self.height];
-            for j in 0..self.height {
-                for i in 0..self.width {
-                    temp_zone[j][self.width - i - 1] = self.zone[i][j];
-                }
-            }
-            self.zone = temp_zone;
-            mem::swap(&mut self.width, &mut self.height);
-        }
-    */
+    pub fn color(&self) -> &[f32; 4] {
+        &self.color
+    }
 }
 
 impl fmt::Debug for Figure {
@@ -88,31 +70,71 @@ impl fmt::Debug for Figure {
     }
 }
 
-pub fn create_figure(figure_type: i32) -> Figure {
+pub fn create_figure(figure_type: i32, figure_color: [f32; 4]) -> Figure {
     let x = 4_usize;
     let y = 0_usize;
     match figure_type {
-        0 => Figure::new(x, y, vec![vec![true, true, true, true]]),
-        1 => Figure::new(x, y, vec![vec![true, false, false], vec![true, true, true]]),
-        2 => Figure::new(x, y, vec![vec![false, false, true], vec![true, true, true]]),
-        3 => Figure::new(x, y, vec![vec![true, true], vec![true, true]]),
-        4 => Figure::new(x, y, vec![vec![false, true, true], vec![true, true, false]]),
-        5 => Figure::new(x, y, vec![vec![false, true, false], vec![true, true, true]]),
-        6 => Figure::new(x, y, vec![vec![true, true, false], vec![false, true, true]]),
+        0 => Figure::new(x, y, vec![vec![true, true, true, true]], figure_color),
+        1 => Figure::new(
+            x,
+            y,
+            vec![vec![true, false, false], vec![true, true, true]],
+            figure_color,
+        ),
+        2 => Figure::new(
+            x,
+            y,
+            vec![vec![false, false, true], vec![true, true, true]],
+            figure_color,
+        ),
+        3 => Figure::new(x, y, vec![vec![true, true], vec![true, true]], figure_color),
+        4 => Figure::new(
+            x,
+            y,
+            vec![vec![false, true, true], vec![true, true, false]],
+            figure_color,
+        ),
+        5 => Figure::new(
+            x,
+            y,
+            vec![vec![false, true, false], vec![true, true, true]],
+            figure_color,
+        ),
+        6 => Figure::new(
+            x,
+            y,
+            vec![vec![true, true, false], vec![false, true, true]],
+            figure_color,
+        ),
         _ => panic!("Wrong figure type"),
     }
 }
 
 pub fn move_right(figure: &Figure) -> Figure {
-    Figure::new(figure.x() + 1, figure.y(), figure.zone().clone())
+    Figure::new(
+        figure.x() + 1,
+        figure.y(),
+        figure.zone().clone(),
+        *figure.color(),
+    )
 }
 
 pub fn move_left(figure: &Figure) -> Figure {
-    Figure::new(figure.x() - 1, figure.y(), figure.zone().clone())
+    Figure::new(
+        figure.x() - 1,
+        figure.y(),
+        figure.zone().clone(),
+        *figure.color(),
+    )
 }
 
 pub fn rotate_right(figure: &Figure) -> Figure {
-    let mut f = Figure::new(figure.x(), figure.y(), figure.zone().clone());
+    let mut f = Figure::new(
+        figure.x(),
+        figure.y(),
+        figure.zone().clone(),
+        *figure.color(),
+    );
     let mut temp_zone = vec![vec![false; f.width()]; f.height()];
     for j in 0..f.height() {
         for i in 0..f.width() {
@@ -125,7 +147,12 @@ pub fn rotate_right(figure: &Figure) -> Figure {
 }
 
 pub fn rotate_left(figure: &Figure) -> Figure {
-    let mut f = Figure::new(figure.x(), figure.y(), figure.zone().clone());
+    let mut f = Figure::new(
+        figure.x(),
+        figure.y(),
+        figure.zone().clone(),
+        *figure.color(),
+    );
     let mut temp_zone = vec![vec![false; f.width]; f.height];
     for j in 0..f.height() {
         for i in 0..f.width() {
