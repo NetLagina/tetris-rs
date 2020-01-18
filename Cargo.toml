@@ -1,5 +1,5 @@
 [package]
-name = "game"
+name = "tetris-rs"
 version = "0.1.1"
 authors = ["Zhan Poplavskyi <gan.popl@gmail.com>"]
 edition = "2018"

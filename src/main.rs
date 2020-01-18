@@ -13,7 +13,7 @@ fn main() {
     let settings = Settings::new();
     let mut game = Game::new();
     let mut window: PistonWindow = WindowSettings::new(
-        "Tetris v0.1 pre-alpha",
+        "Tetris v0.1.1 pre-alpha",
         [settings.game_width, settings.game_height],
     )
     .exit_on_esc(true)
@@ -27,7 +27,7 @@ fn main() {
 
         if let Some(args) = e.update_args() {
             game.update(args);
-        }
+        };
 
         game.render(&mut window, &e);
     }
