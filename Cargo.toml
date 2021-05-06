@@ -1,9 +1,9 @@
 [package]
 name = "tetris-rs"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Zhan Poplavskyi <gan.popl@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-piston_window = "0.105.0"
-rand = "0.7.2"
+piston_window = "0.120.0"
+rand = "0.8.3"
