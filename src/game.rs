@@ -2,22 +2,39 @@ extern crate piston_window;
 
 use piston_window::*;
 
+use crate::gamezone::*;
 use crate::level::Level;
+use crate::settings::Settings;
+
+const COLOR_WHITE: [f32; 4] = [1.0; 4];
+
+const FIGURE_SIDE_PX: f64 = 20_f64;
 
 pub struct Game {
     game_zone: GameZone,
     level: Level,
     prev_time: f64,
     game_over: bool,
+    settings: Settings,
+    render_zoom_coefficient: f64,
 }
 
 impl Game {
     pub fn new() -> Self {
+        let settings = Settings::new();
         Game {
-            game_zone: GameZone::new(10.0, 30.0, 202.0, 402.0),
+            game_zone: GameZone::new(
+                GAME_ZONE_X,
+                GAME_ZONE_Y,
+                GAME_ZONE_WIDTH,
+                GAME_ZONE_HEIGHT,
+                1_f64,
+            ),
             level: Level::new(),
             prev_time: 0_f64,
             game_over: false,
+            settings,
+            render_zoom_coefficient: 1_f64,
         }
     }
 
@@ -39,108 +56,105 @@ impl Game {
         }
     }
 
+    pub fn resize(&mut self, args: ResizeArgs) {
+        let draw_size = args.draw_size;
+        self.render_zoom_coefficient = if (draw_size[0] as f64 / self.settings.game_width as f64)
+            < (draw_size[1] as f64 / self.settings.game_height as f64)
+        {
+            draw_size[0] as f64 / self.settings.game_width as f64
+        } else {
+            draw_size[1] as f64 / self.settings.game_height as f64
+        };
+        self.game_zone = GameZone::new(
+            GAME_ZONE_X,
+            GAME_ZONE_Y,
+            GAME_ZONE_WIDTH,
+            GAME_ZONE_HEIGHT,
+            self.render_zoom_coefficient,
+        );
+    }
+
     pub fn render(&self, window: &mut PistonWindow, e: &Event) {
-        let window_settings = window.window.size();
+        let width = window.draw_size().width;
+        let height = window.draw_size().height;
         window.draw_2d(e, |c, g, _device| {
             clear([0.0; 4], g);
 
             /* window 640x480 */
+            line(COLOR_WHITE, 1.0, [0.0, 0.0, width, 0.0], c.transform, g);
             line(
-                [1.0; 4],
+                COLOR_WHITE,
                 1.0,
-                [0.0, 0.0, window_settings.width, 0.0],
+                [width, 0.0, width, height],
                 c.transform,
                 g,
             );
             line(
-                [1.0; 4],
+                COLOR_WHITE,
                 1.0,
-                [
-                    window_settings.width,
-                    0.0,
-                    window_settings.width,
-                    window_settings.height,
-                ],
+                [width, height, 0.0, height],
                 c.transform,
                 g,
             );
-            line(
-                [1.0; 4],
-                1.0,
-                [
-                    window_settings.width,
-                    window_settings.height,
-                    0.0,
-                    window_settings.height,
-                ],
-                c.transform,
-                g,
-            );
-            line(
-                [1.0; 4],
-                1.0,
-                [0.0, 0.0, 0.0, window_settings.height],
-                c.transform,
-                g,
-            );
+            line(COLOR_WHITE, 1.0, [0.0, 0.0, 0.0, height], c.transform, g);
             /* window end */
 
             if !self.game_over {
                 /* game field */
                 line(
-                    [1.0; 4],
+                    COLOR_WHITE,
                     1.0,
                     [
-                        self.game_zone.x,
-                        self.game_zone.y,
-                        self.game_zone.x + self.game_zone.width,
-                        self.game_zone.y,
+                        self.game_zone.x(),
+                        self.game_zone.y(),
+                        self.game_zone.x() + self.game_zone.width(),
+                        self.game_zone.y(),
                     ],
                     c.transform,
                     g,
                 );
                 line(
-                    [1.0; 4],
+                    COLOR_WHITE,
                     1.0,
                     [
-                        self.game_zone.x + self.game_zone.width,
-                        self.game_zone.y,
-                        self.game_zone.x + self.game_zone.width,
-                        self.game_zone.y + self.game_zone.height,
+                        self.game_zone.x() + self.game_zone.width(),
+                        self.game_zone.y(),
+                        self.game_zone.x() + self.game_zone.width(),
+                        self.game_zone.y() + self.game_zone.height(),
                     ],
                     c.transform,
                     g,
                 );
                 line(
-                    [1.0; 4],
+                    COLOR_WHITE,
                     1.0,
                     [
-                        self.game_zone.x + self.game_zone.width,
-                        self.game_zone.y + self.game_zone.height,
-                        self.game_zone.x,
-                        self.game_zone.y + self.game_zone.height,
+                        self.game_zone.x() + self.game_zone.width(),
+                        self.game_zone.y() + self.game_zone.height(),
+                        self.game_zone.x(),
+                        self.game_zone.y() + self.game_zone.height(),
                     ],
                     c.transform,
                     g,
                 );
                 line(
-                    [1.0; 4],
+                    COLOR_WHITE,
                     1.0,
                     [
-                        self.game_zone.x,
-                        self.game_zone.y,
-                        self.game_zone.x,
-                        self.game_zone.y + self.game_zone.height,
+                        self.game_zone.x(),
+                        self.game_zone.y(),
+                        self.game_zone.x(),
+                        self.game_zone.y() + self.game_zone.height(),
                     ],
                     c.transform,
                     g,
                 );
 
-                let square_side = 20_f64; //px
+                let square_side = FIGURE_SIDE_PX * self.render_zoom_coefficient; //px
                 for i in 0..self.level.width() {
                     for j in 0..self.level.height() {
-                        let x2 = i as f64 * square_side + self.game_zone.x + 1.0;
-                        let y2 = j as f64 * square_side + self.game_zone.y + 1.0;
+                        let x2 = i as f64 * square_side + self.game_zone.x() + 1.0;
+                        let y2 = j as f64 * square_side + self.game_zone.y() + 1.0;
                         if self.level.get(i, j) {
                             rectangle(
                                 [0.86, 0.86, 0.86, 1.0],
@@ -162,12 +176,12 @@ impl Game {
             /* game field end */
             } else {
                 rectangle(
-                    [1.0; 4],
+                    COLOR_WHITE,
                     [
-                        self.game_zone.x,
-                        self.game_zone.y,
-                        self.game_zone.width,
-                        self.game_zone.height,
+                        self.game_zone.x(),
+                        self.game_zone.y(),
+                        self.game_zone.width(),
+                        self.game_zone.height(),
                     ],
                     c.transform,
                     g,
@@ -184,24 +198,6 @@ impl Game {
             } else {
                 self.game_over = true;
             }
-        }
-    }
-}
-
-struct GameZone {
-    pub x: f64,
-    pub y: f64,
-    pub width: f64,
-    pub height: f64,
-}
-
-impl GameZone {
-    fn new(x: f64, y: f64, width: f64, height: f64) -> Self {
-        GameZone {
-            x,
-            y,
-            width,
-            height,
         }
     }
 }

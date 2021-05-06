@@ -7,6 +7,7 @@ use crate::settings::*;
 mod game;
 use crate::game::*;
 mod figure;
+mod gamezone;
 mod level;
 
 fn main() {
@@ -27,6 +28,10 @@ fn main() {
 
         if let Some(args) = e.update_args() {
             game.update(args);
+        };
+
+        if let Some(args) = e.resize_args() {
+            game.resize(args);
         };
 
         game.render(&mut window, &e);
