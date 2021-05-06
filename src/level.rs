@@ -96,14 +96,14 @@ impl Level {
                     }
                 }
                 let mut rng = rand::thread_rng();
-                let red = rng.gen_range(0, 2) as f32;
-                let green = rng.gen_range(0, 2) as f32;
+                let red = rng.gen_range(0..2) as f32;
+                let green = rng.gen_range(0..2) as f32;
                 let blue = if red == 0.0 && green == 0.0 {
                     1.0
                 } else {
-                    rng.gen_range(0, 2) as f32
+                    rng.gen_range(0..2) as f32
                 };
-                let figure = create_figure(rng.gen_range(0, 7), [red, green, blue, 1.0]);
+                let figure = create_figure(rng.gen_range(0..7), [red, green, blue, 1.0]);
                 if !is_free_space(&self.zone, &figure) {
                     game_over = true;
                 } else {
