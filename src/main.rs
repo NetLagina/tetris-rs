@@ -26,6 +26,10 @@ fn main() {
             game.button_press(button);
         };
 
+        if let Some(button) = e.release_args() {
+            game.button_release(button);
+        };
+
         if let Some(args) = e.update_args() {
             game.update(args);
         };

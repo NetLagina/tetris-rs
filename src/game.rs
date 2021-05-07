@@ -17,6 +17,8 @@ pub struct Game {
     game_over: bool,
     settings: Settings,
     render_zoom_coefficient: f64,
+    is_step_pressed: bool,
+    step_prev_time: f64,
 }
 
 impl Game {
@@ -35,6 +37,8 @@ impl Game {
             game_over: false,
             settings,
             render_zoom_coefficient: 1_f64,
+            is_step_pressed: false,
+            step_prev_time: 0_f64,
         }
     }
 
@@ -53,6 +57,14 @@ impl Game {
         }
         if button == Button::Keyboard(Key::S) {
             self.level.step();
+            self.is_step_pressed = true;
+        }
+    }
+
+    pub fn button_release(&mut self, button: Button) {
+        if button == Button::Keyboard(Key::S) {
+            self.is_step_pressed = false;
+            self.step_prev_time = 0_f64;
         }
     }
 
@@ -191,12 +203,22 @@ impl Game {
     }
 
     pub fn update(&mut self, args: UpdateArgs) {
+        const STEP_TIME: f64 = 1.0;
         self.prev_time += args.dt;
-        if self.prev_time > 1.0 {
+        if self.prev_time > STEP_TIME {
             if self.level.step() {
                 self.prev_time = 0.0;
             } else {
                 self.game_over = true;
+            }
+        }
+
+        const AUTO_STEP_TIME: f64 = 0.05;
+        if self.is_step_pressed {
+            self.step_prev_time += args.dt;
+            if self.step_prev_time > AUTO_STEP_TIME {
+                self.level.step();
+                self.step_prev_time = 0.0;
             }
         }
     }
