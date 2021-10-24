@@ -96,14 +96,8 @@ impl Level {
                     }
                 }
                 let mut rng = rand::thread_rng();
-                let red = rng.gen_range(0..2) as f32;
-                let green = rng.gen_range(0..2) as f32;
-                let blue = if red == 0.0 && green == 0.0 {
-                    1.0
-                } else {
-                    rng.gen_range(0..2) as f32
-                };
-                let figure = create_figure(rng.gen_range(0..7), [red, green, blue, 1.0]);
+                let figure_color = Level::generate_color(&mut rng);
+                let figure = create_figure(rng.gen_range(0..7), figure_color);
                 if !is_free_space(&self.zone, &figure) {
                     game_over = true;
                 } else {
@@ -113,6 +107,17 @@ impl Level {
             }
         }
         !game_over
+    }
+
+    fn generate_color(rng: &mut ThreadRng) -> [f32; 4] {
+        let red = rng.gen_range(0..2) as f32;
+        let green = rng.gen_range(0..2) as f32;
+        let blue = if red == 0.0 && green == 0.0 {
+            1.0
+        } else {
+            rng.gen_range(0..2) as f32
+        };
+        [red, green, blue, 1.0]
     }
 
     pub fn move_right(&mut self) {
