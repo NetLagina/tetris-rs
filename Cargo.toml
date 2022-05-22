@@ -5,5 +5,5 @@ authors = ["Zhan Poplavskyi <gan.popl@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-piston_window = "0.120.0"
-rand = "0.8.4"
+piston_window = "0.123.0"
+rand = "0.8.5"
