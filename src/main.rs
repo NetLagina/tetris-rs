@@ -1,6 +1,7 @@
 extern crate piston_window;
 
 use piston_window::*;
+use std::path::Path;
 
 mod settings;
 use crate::settings::*;
@@ -8,18 +9,23 @@ mod game;
 use crate::game::*;
 mod figure;
 mod gamezone;
+mod infozone;
 mod level;
 
 fn main() {
     let settings = Settings::new();
     let mut game = Game::new();
     let mut window: PistonWindow = WindowSettings::new(
-        "Tetris v0.1.3 pre-alpha",
+        "Tetris v0.1.4 pre-alpha",
         [settings.game_width, settings.game_height],
     )
     .exit_on_esc(true)
     .build()
     .unwrap();
+
+    let mut glyphs = window
+        .load_font(Path::new("assets/fonts/ARCADECLASSIC.TTF"))
+        .unwrap();
 
     while let Some(e) = window.next() {
         if let Some(button) = e.press_args() {
@@ -38,6 +44,6 @@ fn main() {
             game.resize(args);
         };
 
-        game.render(&mut window, &e);
+        game.render(&mut window, &e, &mut glyphs);
     }
 }
