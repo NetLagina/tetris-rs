@@ -236,9 +236,9 @@ impl Game {
     }
 
     pub fn update(&mut self, args: UpdateArgs) {
-        const STEP_TIME: f64 = 1.0;
+        let step_time: f64 = 1.0 / (self.score as f64 / 10.0 + 1.0);
         self.prev_time += args.dt;
-        if self.prev_time > STEP_TIME {
+        if self.prev_time > step_time {
             if self.level.step(&mut self.score) {
                 self.prev_time = 0.0;
             } else {
