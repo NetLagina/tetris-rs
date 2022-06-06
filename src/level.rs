@@ -49,7 +49,7 @@ impl Level {
         self.figure.as_ref()
     }
 
-    pub fn step(&mut self) -> bool {
+    pub fn step(&mut self, score: &mut u32) -> bool {
         let game_over;
         match &mut self.figure {
             Some(f) => {
@@ -93,6 +93,7 @@ impl Level {
                                 self.zone[j2][i2] = self.zone[j2][i2 - 1];
                             }
                         }
+                        *score += 1;
                     }
                 }
                 let mut rng = rand::thread_rng();
