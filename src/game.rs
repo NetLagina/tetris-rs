@@ -1,7 +1,8 @@
 extern crate piston_window;
 
+use crate::graphics::rectangle;
 use piston_window::*;
-
+use piston_window::graphics::{clear, line, Transformed};
 use crate::gamezone::*;
 use crate::infozone::*;
 use crate::level::Level;
@@ -107,7 +108,7 @@ impl Game {
     pub fn render(&self, window: &mut PistonWindow, e: &Event, glyphs: &mut Glyphs) {
         let width = window.draw_size().width;
         let height = window.draw_size().height;
-        window.draw_2d(e, |c, g, device| {
+        window.draw_2d(e, |c, g, _device| {
             clear([0.0; 4], g);
 
             /* window 640x480 */
@@ -142,7 +143,6 @@ impl Game {
                         g,
                     )
                     .unwrap();
-                glyphs.factory.encoder.flush(device);
                 /* info zone end */
 
                 /* game field */

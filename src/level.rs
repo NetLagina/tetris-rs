@@ -96,9 +96,9 @@ impl Level {
                         *score += 1;
                     }
                 }
-                let mut rng = rand::thread_rng();
+                let mut rng = rand::rng();
                 let figure_color = Level::generate_color(&mut rng);
-                let figure = create_figure(rng.gen_range(0..7), figure_color);
+                let figure = create_figure(rng.random_range(0..7), figure_color);
                 if !is_free_space(&self.zone, &figure) {
                     game_over = true;
                 } else {
@@ -111,12 +111,12 @@ impl Level {
     }
 
     fn generate_color(rng: &mut ThreadRng) -> [f32; 4] {
-        let red = rng.gen_range(0..2) as f32;
-        let green = rng.gen_range(0..2) as f32;
+        let red = rng.random_range(0..2) as f32;
+        let green = rng.random_range(0..2) as f32;
         let blue = if red == 0.0 && green == 0.0 {
             1.0
         } else {
-            rng.gen_range(0..2) as f32
+            rng.random_range(0..2) as f32
         };
         [red, green, blue, 1.0]
     }
