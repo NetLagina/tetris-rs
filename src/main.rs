@@ -2,6 +2,7 @@ extern crate piston_window;
 
 use piston_window::*;
 use std::path::Path;
+use piston_window::texture::TextureSettings;
 
 mod settings;
 use crate::settings::*;
@@ -16,7 +17,7 @@ fn main() {
     let settings = Settings::new();
     let mut game = Game::new();
     let mut window: PistonWindow = WindowSettings::new(
-        "Tetris v0.1.6 pre-alpha",
+        "Tetris v0.1.7 pre-alpha",
         [settings.game_width, settings.game_height],
     )
     .exit_on_esc(true)
@@ -24,7 +25,7 @@ fn main() {
     .unwrap();
 
     let mut glyphs = window
-        .load_font(Path::new("assets/fonts/ARCADECLASSIC.TTF"))
+        .load_font(Path::new("assets/fonts/ARCADECLASSIC.TTF"), TextureSettings::new())
         .unwrap();
 
     while let Some(e) = window.next() {

@@ -1,5 +1,5 @@
-use crate::Text;
-use piston_window::types::{Color, FontSize};
+use piston_window::graphics::Text;
+use piston_window::graphics::types::{Color, FontSize};
 
 pub const INFO_ZONE_X: f64 = 240.0;
 pub const INFO_ZONE_Y: f64 = 90.0;
